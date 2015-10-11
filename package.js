@@ -1,8 +1,8 @@
 Package.describe({
   name: 'bobbigmac:font-crush',
-  version: '0.1.0',
+  version: '0.1.1',
   summary: 'Encodes any fonts in project to base64 data uris and delivers to the client as CSS.',
-  git: '',
+  git: 'https://github.com/bobbigmac/font-crush',
   documentation: 'README.md'
 });
 
