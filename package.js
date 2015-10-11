@@ -8,7 +8,7 @@ Package.describe({
 
 Package.registerBuildPlugin({
   name: 'compileFontsToCss',
-  use: ['base64'],
+  use: ['base64@1.0.4'],
   sources: ['plugin/font-crush.js']
 });
 
