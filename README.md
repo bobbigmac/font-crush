@@ -38,6 +38,14 @@ For example...
 }
 ```
 
+Then assign a `font-family` as normal. 
+
+```css
+p.look-awesome {
+	font-family: My Font, cursive;
+}
+```
+
 ## Warning
 
 Probably not advisable to use a LOT of fonts in a production environment as this package does not cache anything and the CSS file can become quite large as a result. I'm using in a fairly simple project where a half-meg of CSS fonts is no big deal.
