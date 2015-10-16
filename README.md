@@ -52,10 +52,10 @@ An array containing the names and styles/weights/types of all loaded fonts will 
 // CrushedFonts (global on client)
 [
 	{
-		name: 'My Font',
-		styles: [
-			{ style: 'normal', weight: '400', types: ['woff', 'otf']},
-			{ style: 'bold', weight: '700', types: ['otf']}
+		"name": "My Font",
+		"styles": [
+			{ "style": "normal", "weight": "400", "types": ["woff", "otf"]},
+			{ "style": "bold", "weight": "700", "types": ["otf"]}
 		]
 	}
 ]
