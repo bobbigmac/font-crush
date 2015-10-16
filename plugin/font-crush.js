@@ -1,6 +1,5 @@
 
 Plugin.registerCompiler({
-	//TODO: Support svg if it's under path matching /*fonts*/
   extensions: ['woff', 'woff2', 'otf', 'ttf', 'eot', 'svg', 'svgz']
 }, function() {
 	return new FontCompiler();
@@ -59,6 +58,42 @@ var fontFileToObj = function(fileName, base64) {
 	return fontObj;
 };
 
+var fontsToData = function(fontsObj) {
+	var output = [];
+	if(fontsObj) {
+		var namedFonts = {};
+		
+		Object.keys(fontsObj).map(function(fontName) {
+			if(fontsObj[fontName] && fontsObj[fontName].length) {
+
+				fontsObj[fontName].forEach(function(detail) {
+					namedFonts[detail.name] = namedFonts[detail.name] || {};
+					namedFonts[detail.name][detail.style+'_'+detail.weight] = namedFonts[detail.name][detail.style+'_'+detail.weight] || [];
+					namedFonts[detail.name][detail.style+'_'+detail.weight].push(detail.extension);
+				});
+			}
+		});
+
+		var output = Object.keys(namedFonts).map(function(fontName) {
+			return {
+				name: fontName,
+				styles: Object.keys(namedFonts[fontName]).map(function(fontStyle) {
+					var extensions = namedFonts[fontName][fontStyle];
+					var style = fontStyle.split('_');
+					if(style && style.length == 2) {
+						return {
+							style: style[0],
+							weight: style[1],
+							types: extensions
+						};
+					}
+				}).filter(function(o) { return !!o; })
+			};
+		});
+	}
+	return output;
+};
+
 var fontsToCss = function(fontsObj) {
 	var output = [];
 	if(fontsObj) {
@@ -95,9 +130,9 @@ FontCompiler.prototype.processFilesForTarget = function (inputFiles) {
 	var outputFilename = "fonts_" + (new Date()).getTime() + ".css";
 
 	inputFiles.forEach(function(inputFile, pos) {
+
 		var fileName = inputFile.getBasename();
 		var pathName = inputFile.getPathInPackage();
-		//console.log(pos, fileName, pathName);
 
 		var fileContents = inputFile.getContentsAsBuffer();
 		var base64 = Base64.encode(fileContents);
@@ -114,6 +149,27 @@ FontCompiler.prototype.processFilesForTarget = function (inputFiles) {
 				data: fontsToCss(fonts),
 				path: outputFilename
 			});
+
+			var fontsData = fontsToData(fonts);
+			var fontsJson = JSON.stringify(fontsData);
+
+			// Add a javascript file to tell the client which fonts were loaded.
+			inputFile.addJavaScript({
+				data: 'CrushedFonts = '+fontsJson+';',
+				path: 'crushed-fonts.js'
+			});
+
+			// Add an asset of loaded fonts (probably redundant but maybe useful to someone)
+			inputFile.addAsset({
+				data: fontsJson,
+				path: 'crushed-fonts.json'
+			});
+
+			// Adding javascript and assets seems to determine their server/client availability
+			// 	from the parent folder. So... if you want your fonts available only on the 
+			// 	server (though I can't imagine why) then place them in a folder such as /server/fonts.
+			// 	Typically you would want to use /client/fonts to deliver the css, and the javascript
+			// 	to the client.
 		}
 	});
 };

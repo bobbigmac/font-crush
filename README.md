@@ -46,6 +46,21 @@ p.look-awesome {
 }
 ```
 
+An array containing the names and styles/weights/types of all loaded fonts will be delivered to the client in a javascript file (if you place your fonts under the client directory) globally as `CrushedFonts` in the form:
+
+```json
+// CrushedFonts (global on client)
+[
+	{
+		name: 'My Font',
+		styles: [
+			{ style: 'normal', weight: '400', types: ['woff', 'otf']},
+			{ style: 'bold', weight: '700', types: ['otf']}
+		]
+	}
+]
+```
+
 ## Warning
 
 Probably not advisable to use a LOT of fonts in a production environment as this package does not cache anything and the CSS file can become quite large as a result. I'm using in a fairly simple project where a half-meg of CSS fonts is no big deal.
